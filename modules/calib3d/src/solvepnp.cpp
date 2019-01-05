@@ -188,7 +188,8 @@ bool solvePnP( InputArray _opoints, InputArray _ipoints,
         upnp PnP(cameraMatrix, opoints, ipoints);
 
         Mat R, rvec = _rvec.getMat(), tvec = _tvec.getMat();
-        PnP.compute_pose(R, tvec);
+        double f = PnP.compute_pose(R, tvec);
+        std::cout << "f: " << f << "\n";
         Rodrigues(R, rvec);
         return true;
     }
