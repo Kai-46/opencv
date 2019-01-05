@@ -755,7 +755,7 @@ a 3D point expressed in the world frame into the camera frame:
        are sufficient to compute a pose but there are up to 4 solutions). The initial solution should be close to the
        global solution to converge.
  */
-CV_EXPORTS_W bool solvePnP( InputArray objectPoints, InputArray imagePoints,
+CV_EXPORTS_W double solvePnP( InputArray objectPoints, InputArray imagePoints,
                             InputArray cameraMatrix, InputArray distCoeffs,
                             OutputArray rvec, OutputArray tvec,
                             bool useExtrinsicGuess = false, int flags = SOLVEPNP_ITERATIVE );

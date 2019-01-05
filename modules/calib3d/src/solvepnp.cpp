@@ -123,7 +123,7 @@ double solvePnP( InputArray _opoints, InputArray _ipoints,
     Mat cameraMatrix = Mat_<double>(cameraMatrix0);
     Mat distCoeffs = Mat_<double>(distCoeffs0);
     
-    // bool result = false;
+    bool result = false;
     
     // @kai
     // if (flags == SOLVEPNP_EPNP || flags == SOLVEPNP_DLS || flags == SOLVEPNP_UPNP)
@@ -204,7 +204,7 @@ double solvePnP( InputArray _opoints, InputArray _ipoints,
     }
     else
         CV_Error(CV_StsBadArg, "The flags argument must be one of SOLVEPNP_ITERATIVE, SOLVEPNP_P3P, SOLVEPNP_EPNP or SOLVEPNP_DLS");
-    
+    // return result;
     return -1.;
 }
 
