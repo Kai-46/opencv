@@ -80,6 +80,50 @@ void drawFrameAxes(InputOutputArray image, InputArray cameraMatrix, InputArray d
     line(image, imagePoints[0], imagePoints[3], Scalar(255, 0, 0), thickness);
 }
 
+double solveUPnP( InputArray _opoints, InputArray _ipoints, double cx, double cy,
+                OutputArray _rvec, OutputArray _tvec)
+{
+    CV_INSTRUMENT_REGION();
+
+    Mat opoints = _opoints.getMat(), ipoints = _ipoints.getMat();
+    int npoints = std::max(opoints.checkVector(3, CV_32F), opoints.checkVector(3, CV_64F));
+    CV_Assert( npoints >= 4 && npoints == std::max(ipoints.checkVector(2, CV_32F), ipoints.checkVector(2, CV_64F)) );
+
+    Mat rvec, tvec;
+
+    int mtype = CV_64F;
+    // use CV_32F if all PnP inputs are CV_32F and outputs are empty
+    if (_ipoints.depth() == _cameraMatrix.depth() && _ipoints.depth() == _opoints.depth() &&
+        _rvec.empty() && _tvec.empty())
+        mtype = _opoints.depth();
+
+    _rvec.create(3, 1, mtype);
+    _tvec.create(3, 1, mtype);
+        
+    rvec = _rvec.getMat();
+    tvec = _tvec.getMat();
+
+    // Mat cameraMatrix = Mat_<double>(_cameraMatrix.getMat());
+    Mat cameraMatrix(3, 3, CV_64F, 0.);
+    cameraMatrix.at<CV_64F>(0, 2) = cx;
+    cameraMatrix.at<CV_64F>(1, 2) = cy;
+    cameraMatrix.at<CV_64F><2, 2> = 1.;
+    
+    upnp PnP(cameraMatrix, opoints, ipoints);
+
+    Mat R, rvec = _rvec.getMat(), tvec = _tvec.getMat();
+    double f = PnP.compute_pose(R, tvec);
+        // @kai
+//     cameraMatrix.at<double>(0, 0) = f;
+//     cameraMatrix.at<double>(1, 1) = f;
+//         std::cout << "f: " << f << "\n";
+        
+   Rodrigues(R, rvec);
+    
+   return f;
+}
+    
+    
 double solvePnP( InputArray _opoints, InputArray _ipoints,
                InputArray _cameraMatrix, InputArray _distCoeffs,
                OutputArray _rvec, OutputArray _tvec, bool useExtrinsicGuess, int flags )
