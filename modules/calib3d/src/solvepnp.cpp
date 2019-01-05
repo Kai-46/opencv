@@ -80,7 +80,7 @@ void drawFrameAxes(InputOutputArray image, InputArray cameraMatrix, InputArray d
     line(image, imagePoints[0], imagePoints[3], Scalar(255, 0, 0), thickness);
 }
 
-bool solvePnP( InputArray _opoints, InputArray _ipoints,
+double solvePnP( InputArray _opoints, InputArray _ipoints,
                InputArray _cameraMatrix, InputArray _distCoeffs,
                OutputArray _rvec, OutputArray _tvec, bool useExtrinsicGuess, int flags )
 {
@@ -122,8 +122,10 @@ bool solvePnP( InputArray _opoints, InputArray _ipoints,
     Mat distCoeffs0 = _distCoeffs.getMat();
     Mat cameraMatrix = Mat_<double>(cameraMatrix0);
     Mat distCoeffs = Mat_<double>(distCoeffs0);
-    bool result = false;
-
+    
+    // bool result = false;
+    
+    // @kai
     // if (flags == SOLVEPNP_EPNP || flags == SOLVEPNP_DLS || flags == SOLVEPNP_UPNP)
     if (flags == SOLVEPNP_EPNP)
     {
@@ -134,7 +136,8 @@ bool solvePnP( InputArray _opoints, InputArray _ipoints,
         Mat R;
         PnP.compute_pose(R, tvec);
         Rodrigues(R, rvec);
-        result = true;
+    
+   //     result = true;
     }
     else if (flags == SOLVEPNP_P3P)
     {
@@ -168,7 +171,7 @@ bool solvePnP( InputArray _opoints, InputArray _ipoints,
         cvFindExtrinsicCameraParams2(&c_objectPoints, &c_imagePoints, &c_cameraMatrix,
                                      (c_distCoeffs.rows && c_distCoeffs.cols) ? &c_distCoeffs : 0,
                                      &c_rvec, &c_tvec, useExtrinsicGuess );
-        result = true;
+        // result = true;
     }
     else if (flags == SOLVEPNP_DLS)
     {
@@ -181,7 +184,7 @@ bool solvePnP( InputArray _opoints, InputArray _ipoints,
         bool result = PnP.compute_pose(R, tvec);
         if (result)
             Rodrigues(R, rvec);
-        return result;
+        // return result;
     }
     else if (flags == SOLVEPNP_UPNP)
     {
@@ -189,13 +192,20 @@ bool solvePnP( InputArray _opoints, InputArray _ipoints,
 
         Mat R, rvec = _rvec.getMat(), tvec = _tvec.getMat();
         double f = PnP.compute_pose(R, tvec);
-        std::cout << "f: " << f << "\n";
+        // @kai
+//         cameraMatrix.at<double>(0, 0) = f;
+//         cameraMatrix.at<double>(1, 1) = f;
+//         std::cout << "f: " << f << "\n";
+        
         Rodrigues(R, rvec);
-        return true;
+        
+        return f;
+        //return true;
     }
     else
         CV_Error(CV_StsBadArg, "The flags argument must be one of SOLVEPNP_ITERATIVE, SOLVEPNP_P3P, SOLVEPNP_EPNP or SOLVEPNP_DLS");
-    return result;
+    
+    return -1.;
 }
 
 class PnPRansacCallback CV_FINAL : public PointSetRegistrator::Callback
