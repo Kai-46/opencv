@@ -92,26 +92,20 @@ double solveUPnP( InputArray _opoints, InputArray _ipoints, double cx, double cy
     Mat rvec, tvec;
 
     int mtype = CV_64F;
-    // use CV_32F if all PnP inputs are CV_32F and outputs are empty
-    if (_ipoints.depth() == _cameraMatrix.depth() && _ipoints.depth() == _opoints.depth() &&
-        _rvec.empty() && _tvec.empty())
-        mtype = _opoints.depth();
-
     _rvec.create(3, 1, mtype);
     _tvec.create(3, 1, mtype);
-        
     rvec = _rvec.getMat();
     tvec = _tvec.getMat();
 
     // Mat cameraMatrix = Mat_<double>(_cameraMatrix.getMat());
     Mat cameraMatrix(3, 3, CV_64F, 0.);
-    cameraMatrix.at<CV_64F>(0, 2) = cx;
-    cameraMatrix.at<CV_64F>(1, 2) = cy;
-    cameraMatrix.at<CV_64F><2, 2> = 1.;
+    cameraMatrix.at<double>(0, 2) = cx;
+    cameraMatrix.at<double>(1, 2) = cy;
+    cameraMatrix.at<double>(2, 2) = 1.;
     
     upnp PnP(cameraMatrix, opoints, ipoints);
 
-    Mat R, rvec = _rvec.getMat(), tvec = _tvec.getMat();
+    Mat R;
     double f = PnP.compute_pose(R, tvec);
         // @kai
 //     cameraMatrix.at<double>(0, 0) = f;

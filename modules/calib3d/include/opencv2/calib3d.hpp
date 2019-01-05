@@ -763,7 +763,7 @@ CV_EXPORTS_W double solvePnP( InputArray objectPoints, InputArray imagePoints,
     
     
 CV_EXPORTS_W double solveUPnP( InputArray _opoints, InputArray _ipoints, double cx, double cy,
-                OutputArray _rvec, OutputArray _tvec)
+                OutputArray _rvec, OutputArray _tvec );
 /** @brief Finds an object pose from 3D-2D point correspondences using the RANSAC scheme.
 
 @param objectPoints Array of object points in the object coordinate space, Nx3 1-channel or
